@@ -1,0 +1,23 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: pong
+  data:
+    mongodb:
+      uri: mongodb://root:123456@127.0.0.1:27017/logs_db
+resilience4j:
+  ratelimiter:
+    instances:
+      pongRateLimiter:
+        limit-for-period: 1
+        limit-refresh-period: 1s
+        timeout-duration: 0ms
+rate-limit:
+  pong:
+    limit-for-period: 1
+    limit-refresh-period: 1s
+rocketmq:
+  name-server: 192.168.50.51:9876
+  consumer:
+    group: log-group

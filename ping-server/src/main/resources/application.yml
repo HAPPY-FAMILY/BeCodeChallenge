@@ -1,0 +1,20 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: ping
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: 123456
+rocketmq:
+  name-server: 192.168.50.51:9876
+  producer:
+    group: log-group
+rate-limit:
+  ping:
+    limit-for-period: 2
+    limit-refresh-period: 1s
+pong:
+  url: http://127.0.0.1:8081/pong
