@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+    <property name="SERVICE_NAME" value="${spring.application.name}" />
+
     <!-- 日志存放路径 -->
     <property name="log.path" value="logs" />
     <!-- 日志输出格式 -->
-    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{20} - [%method,%line] - %msg%n" />
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [${SERVICE_NAME}] [%thread] %-5level %logger{20} - [%method,%line] - %msg%n" />
 
     <!-- 控制台输出 -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
@@ -14,9 +17,9 @@
 
     <!-- 系统日志输出（文件Appender） -->
     <appender name="file_info" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.path}/info.log</file>
+        <file>${log.path}/${SERVICE_NAME}-info.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/info/info.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${log.path}/info/${SERVICE_NAME}-info.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxHistory>1</maxHistory>
             <maxFileSize>100MB</maxFileSize>
             <totalSizeCap>2GB</totalSizeCap>
@@ -32,9 +35,9 @@
     </appender>
 
     <appender name="file_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.path}/error.log</file>
+        <file>${log.path}/${SERVICE_NAME}-error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/error/error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${log.path}/error/${SERVICE_NAME}-error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxHistory>7</maxHistory>
             <maxFileSize>300MB</maxFileSize>
             <totalSizeCap>5GB</totalSizeCap>
@@ -50,9 +53,9 @@
     </appender>
 
     <appender name="file_warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.path}/warn.log</file>
+        <file>${log.path}/${SERVICE_NAME}-warn.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/warn/warn.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${log.path}/warn/${SERVICE_NAME}-warn.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxHistory>1</maxHistory>
             <maxFileSize>100MB</maxFileSize>
             <totalSizeCap>2GB</totalSizeCap>
@@ -68,9 +71,9 @@
     </appender>
 
     <appender name="file_debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.path}/debug.log</file>
+        <file>${log.path}/${SERVICE_NAME}-debug.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/debug/debug.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${log.path}/debug/${SERVICE_NAME}-debug.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxHistory>1</maxHistory>
             <maxFileSize>100MB</maxFileSize>
             <totalSizeCap>2GB</totalSizeCap>
