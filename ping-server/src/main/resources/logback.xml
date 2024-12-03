@@ -2,7 +2,7 @@
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
 
     <!-- 从 application.yml 中读取服务名 -->
-    <property name="SERVICE_NAME" value="${spring.application.name}" />
+    <property name="SERVICE_NAME" value="${spring.application.name:-ping}" />
 
     <!-- 日志存放路径 -->
     <property name="log.path" value="logs" />

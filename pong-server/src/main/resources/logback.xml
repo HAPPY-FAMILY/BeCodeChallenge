@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
 
-    <property name="SERVICE_NAME" value="${spring.application.name}" />
+    <property name="SERVICE_NAME" value="${spring.application.name:-pong}" />
 
     <!-- 日志存放路径 -->
     <property name="log.path" value="logs" />

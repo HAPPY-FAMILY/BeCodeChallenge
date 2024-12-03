@@ -1,42 +1,43 @@
 package com.code.ping.service
 
-import com.alibaba.fastjson2.JSON
 import com.code.ping.entity.Logs
 import com.code.ping.enums.PingLogsStatus
-import org.apache.rocketmq.spring.core.RocketMQTemplate
+import jakarta.annotation.Resource
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import spock.lang.Specification
-import spock.lang.Subject
 
 /**
  * 测试日志发送到MQ
  */
+@SpringBootTest
 class LogsServiceTest extends Specification {
 
-    RocketMQTemplate rocketMQTemplate
+    @Resource
+    ReactiveMongoTemplate reactiveMongoTemplate;
 
-    @Subject
+    @Resource
     LogsService logsService
 
-    def setup() {
-        rocketMQTemplate = Mock(RocketMQTemplate)
-        logsService = new LogsService(rocketMQTemplate) // 将RocketMQTemplate通过构造器注入
+    // 测试真实保存日志
+    def "Save logs should call insert on ReactiveMongoTemplate"() {
+        given: "new Logs and "
+        def logs = new Logs("spock-test", 8080, PingLogsStatus.SUCCESS.getStatus(), PingLogsStatus.SUCCESS.getMessage())
+
+        when: "ReactiveMongoTemplate.insert"
+        def logEntity = reactiveMongoTemplate.insert(logs, "test-logs").block()
+
+        then: "logEntity is non-null"
+        logEntity != null
     }
 
-    def "should send logs successfully when sendPingLogs is called"() {
-        given: "a PingLogsStatus"
-        def logs = new Logs("ping", 8080, "127.0.0.1", PingLogsStatus.SUCCESS.getStatus(), PingLogsStatus.SUCCESS.getMessage())
+    // 测试保存日志
+    def "Save logs should call saveLogs"() {
+        when: "SaveLogs is called"
+        logsService.saveLogs(PingLogsStatus.SUCCESS, "test-logs")
 
-        // 模拟 RocketMQTemplate 的行为，验证发送消息
-        rocketMQTemplate.convertAndSend(_ as String, _) >> { String topic, String message ->
-            assert topic == "logs-topic"  // 验证正确的 topic
-            assert message != null  // 验证消息内容
-        }
-        // 验证convertAndSend发送
-        when: "the message should be sent successfully"
-        rocketMQTemplate.convertAndSend("logs-topic", JSON.toJSONString(logs))
-
-        // 验证sendPingLogs发送
-        then: "sendPingLogs is called and should be sent successfully"
-        logsService.sendPingLogs(PingLogsStatus.SUCCESS)
+        then: "No exception and save successfully"
+        noExceptionThrown()
     }
+
 }

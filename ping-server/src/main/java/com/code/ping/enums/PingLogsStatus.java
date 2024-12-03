@@ -6,15 +6,15 @@ package com.code.ping.enums;
 public enum PingLogsStatus {
 
     /** 请求成功 */
-    SUCCESS(200, "Ping sent Hello successfully, and Pong’s response was World."),
+    SUCCESS(200, "Ping sent Hello successfully."),
     /** PONG限流 */
-    PONG_LIMIT(429, "Pong limit reached, please try again later."),
+    PONG_LIMIT(429, "Pong was rate limited."),
     /** PING限流 */
     PING_LIMIT(0, "Ping request was rate limited."),
     /** 非法参数 */
-    PONG_FORBIDDEN(403, "Illegal parameter"),
-    /** 未知错误 */
-    UNKNOWN_ERROR(500, "Unknown error"),
+    PONG_FORBIDDEN(403, "Illegal parameter."),
+    /** 其他错误 */
+    UNKNOWN_ERROR(500, "Other error"),
     ;
 
     private Integer status;
