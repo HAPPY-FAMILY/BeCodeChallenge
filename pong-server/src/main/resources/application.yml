@@ -3,6 +3,9 @@ server:
 spring:
   application:
     name: pong
+  data:
+    mongodb:
+      uri: mongodb://root:123456@127.0.0.1:27017/logs_db
 resilience4j:
   ratelimiter:
     instances:
@@ -14,3 +17,5 @@ rate-limit:
   pong:
     limit-for-period: 1
     limit-refresh-period: 1s
+rocketmq:
+  name-server: 127.0.0.1:9876

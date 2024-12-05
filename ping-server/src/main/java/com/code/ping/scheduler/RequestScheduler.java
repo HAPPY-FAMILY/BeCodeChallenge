@@ -44,7 +44,7 @@ public class RequestScheduler {
                                 .doOnSuccess(x -> { // 成功回调
                                     logger.info("Ping sent Hello successfully");
                                     // 保存日志到Mongo
-                                    logsService.saveLogs(PingLogsStatus.SUCCESS, LOGS_COLLECTION);
+                                    logsService.sendPingLogs(PingLogsStatus.SUCCESS);
                                 })
                                 .doOnError(e -> { // 错误回调
                                     if (e instanceof WebClientResponseException webClientException) {
@@ -52,7 +52,7 @@ public class RequestScheduler {
                                         if (statusCode == PingLogsStatus.PONG_LIMIT.getStatus()) { // 判断状态码为429时发送日志队列
                                             logger.warn("Pong was rate limited.");
                                             // 保存日志到Mongo
-                                            logsService.saveLogs(PingLogsStatus.PONG_LIMIT, LOGS_COLLECTION);
+                                            logsService.sendPingLogs(PingLogsStatus.PONG_LIMIT);
                                         } else { // 其他状态直接打印
                                             logger.error("Response error: {}", e.getMessage());
                                         }
@@ -63,7 +63,7 @@ public class RequestScheduler {
                     } else {
                         logger.warn("Ping request was rate limited.");
                         // 保存日志到Mongo
-                        logsService.saveLogs(PingLogsStatus.PING_LIMIT, LOGS_COLLECTION);
+                        logsService.sendPingLogs(PingLogsStatus.PING_LIMIT);
                         return Mono.empty();
                     }
                 }).subscribe();

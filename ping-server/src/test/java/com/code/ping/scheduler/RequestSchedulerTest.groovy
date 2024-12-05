@@ -18,7 +18,6 @@ import spock.lang.Subject
 @ActiveProfiles("test")
 class RequestSchedulerTest extends Specification {
 
-    private static final String LOGS_COLLECTION = "logs"
     private static final String LOCK_FILE = "/Users/macbook/Downloads/test_tmp/rate_limiter.lock";
     private static final String COUNTER_FILE = "/Users/macbook/Downloads/test_tmp/rate_counter.txt";
     private static final int MXA_LIMIT = 2; // 每秒允许的最大请求数
@@ -60,9 +59,9 @@ class RequestSchedulerTest extends Specification {
         scheduler.execute()
 
         then: "Save logs"
-        1 * logsService.saveLogs(PingLogsStatus.SUCCESS, LOGS_COLLECTION) // 验证成功日志保存
-        0 * logsService.saveLogs(PingLogsStatus.PONG_LIMIT, LOGS_COLLECTION) // 没有限流日志
-        0 * logsService.saveLogs(PingLogsStatus.PING_LIMIT, LOGS_COLLECTION) // 没有 Ping 限流日志
+        1 * logsService.sendPingLogs(PingLogsStatus.SUCCESS) // 验证成功日志保存
+        0 * logsService.sendPingLogs(PingLogsStatus.PONG_LIMIT) // 没有限流日志
+        0 * logsService.sendPingLogs(PingLogsStatus.PING_LIMIT) // 没有 Ping 限流日志
     }
 
     // 测试发送后限流 保存限流日志
@@ -79,9 +78,9 @@ class RequestSchedulerTest extends Specification {
         scheduler.execute()
 
         then:
-        1 * logsService.saveLogs(PingLogsStatus.PONG_LIMIT, LOGS_COLLECTION) // 验证限流日志保存
-        0 * logsService.saveLogs(PingLogsStatus.SUCCESS, LOGS_COLLECTION) // 没有成功日志
-        0 * logsService.saveLogs(PingLogsStatus.PING_LIMIT, LOGS_COLLECTION) // 没有 Ping 限流日志
+        1 * logsService.sendPingLogs(PingLogsStatus.PONG_LIMIT) // 验证限流日志保存
+        0 * logsService.sendPingLogs(PingLogsStatus.SUCCESS) // 没有成功日志
+        0 * logsService.sendPingLogs(PingLogsStatus.PING_LIMIT) // 没有 Ping 限流日志
     }
 
     // 测试发送后触发其他WebClientResponseException
@@ -98,9 +97,9 @@ class RequestSchedulerTest extends Specification {
         scheduler.execute()
 
         then:
-        0 * logsService.saveLogs(PingLogsStatus.PONG_LIMIT, LOGS_COLLECTION) // 验证限流日志保存
-        0 * logsService.saveLogs(PingLogsStatus.SUCCESS, LOGS_COLLECTION) // 没有成功日志
-        0 * logsService.saveLogs(PingLogsStatus.PING_LIMIT, LOGS_COLLECTION) // 没有 Ping 限流日志
+        0 * logsService.sendPingLogs(PingLogsStatus.PONG_LIMIT) // 验证限流日志保存
+        0 * logsService.sendPingLogs(PingLogsStatus.SUCCESS) // 没有成功日志
+        0 * logsService.sendPingLogs(PingLogsStatus.PING_LIMIT) // 没有 Ping 限流日志
     }
 
     // 测试触发的其他异常
@@ -116,9 +115,9 @@ class RequestSchedulerTest extends Specification {
         scheduler.execute()
 
         then:
-        0 * logsService.saveLogs(PingLogsStatus.SUCCESS, LOGS_COLLECTION) // 没有成功日志
-        0 * logsService.saveLogs(PingLogsStatus.PONG_LIMIT, LOGS_COLLECTION) // 没有限流日志
-        0 * logsService.saveLogs(PingLogsStatus.PING_LIMIT, LOGS_COLLECTION) // 没有 Ping 限流日志
+        0 * logsService.sendPingLogs(PingLogsStatus.SUCCESS) // 没有成功日志
+        0 * logsService.sendPingLogs(PingLogsStatus.PONG_LIMIT) // 没有限流日志
+        0 * logsService.sendPingLogs(PingLogsStatus.PING_LIMIT) // 没有 Ping 限流日志
     }
 
     // 测试触发进程限流
@@ -135,9 +134,9 @@ class RequestSchedulerTest extends Specification {
             scheduler.execute()
         }
         then:
-        1 * logsService.saveLogs(PingLogsStatus.PING_LIMIT, LOGS_COLLECTION) // 没有 Ping 限流日志
-        2 * logsService.saveLogs(PingLogsStatus.SUCCESS, LOGS_COLLECTION) // 没有成功日志
-        0 * logsService.saveLogs(PingLogsStatus.PONG_LIMIT, LOGS_COLLECTION) // 没有限流日志
+        1 * logsService.sendPingLogs(PingLogsStatus.PING_LIMIT) // 没有 Ping 限流日志
+        2 * logsService.sendPingLogs(PingLogsStatus.SUCCESS) // 没有成功日志
+        0 * logsService.sendPingLogs(PingLogsStatus.PONG_LIMIT) // 没有限流日志
     }
 
 }
