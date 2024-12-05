@@ -14,8 +14,8 @@ import java.time.Instant
 @ActiveProfiles("test")
 class RateLimiterServiceTest extends Specification  {
 
-    private static final String LOCK_FILE = "/Users/macbook/Downloads/test_tmp/rate_limiter.lock";
-    private static final String COUNTER_FILE = "/Users/macbook/Downloads/test_tmp/rate_counter.txt";
+    private static final String LOCK_FILE = "/Users/mac/Downloads/test_tmp/rate_limiter.lock";
+    private static final String COUNTER_FILE = "/Users/mac/Downloads/test_tmp/rate_counter.txt";
     private static final int MXA_LIMIT = 2; // 每秒允许的最大请求数
 
     RateLimiterService rateLimiterService = new RateLimiterService(LOCK_FILE, COUNTER_FILE, MXA_LIMIT)
@@ -23,7 +23,7 @@ class RateLimiterServiceTest extends Specification  {
     def setup() {
 
         // 清理测试环境
-        def tempFolder = new File("/Users/macbook/Downloads/test_tmp")
+        def tempFolder = new File("/Users/mac/Downloads/test_tmp")
         if (tempFolder.exists()) {
             tempFolder.listFiles().each { file ->
                 file.delete()
@@ -38,7 +38,7 @@ class RateLimiterServiceTest extends Specification  {
 
     def cleanup() {
         // 清理测试环境
-        def tempFolder = new File("/Users/macbook/Downloads/test_tmp")
+        def tempFolder = new File("/Users/mac/Downloads/test_tmp")
         if (tempFolder.exists()) {
             tempFolder.listFiles().each { file ->
                 file.delete()
@@ -70,7 +70,7 @@ class RateLimiterServiceTest extends Specification  {
     def "Should return error if IOException occurs during lock acquisition"() {
         given: "a mock for RandomAccessFile and FileChannel that throws IOException"
 
-        def tempFolder = new File("/Users/macbook/Downloads/test_tmp")
+        def tempFolder = new File("/Users/mac/Downloads/test_tmp")
         if (tempFolder.exists()) {
             tempFolder.listFiles().each { file ->
                 file.delete()

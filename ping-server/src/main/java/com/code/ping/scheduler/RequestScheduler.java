@@ -36,8 +36,8 @@ public class RequestScheduler {
      * 每秒请求pong，1秒最多请求2次
      */
     @Scheduled(fixedRate = 1000)
-    public void execute() {
-        rateLimiterService.tryAcquire()
+    public Mono<String> execute() {
+        return rateLimiterService.tryAcquire()
                 .flatMap(allowed -> {
                     if (allowed) {
                         return requestService.sendPong("/Hello")
@@ -49,7 +49,7 @@ public class RequestScheduler {
                                 .doOnError(e -> { // 错误回调
                                     if (e instanceof WebClientResponseException webClientException) {
                                         int statusCode = webClientException.getStatusCode().value();
-                                        if (statusCode == PingLogsStatus.PONG_LIMIT.getStatus()) { // 判断状态码为429时发送日志队列
+                                        if (statusCode == PingLogsStatus.PONG_LIMIT.getStatus()) { // 判断状态码为429时发送到日志队列
                                             logger.warn("Pong was rate limited.");
                                             // 保存日志到Mongo
                                             logsService.sendPingLogs(PingLogsStatus.PONG_LIMIT);
@@ -64,8 +64,8 @@ public class RequestScheduler {
                         logger.warn("Ping request was rate limited.");
                         // 保存日志到Mongo
                         logsService.sendPingLogs(PingLogsStatus.PING_LIMIT);
-                        return Mono.empty();
+                        return Mono.just("limit");
                     }
-                }).subscribe();
+                });
     }
 }
