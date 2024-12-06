@@ -23,21 +23,26 @@ public class RateLimiterService {
 
     /**
      * semaphore tryAcquire, reset time
+     *
      * @return Mono<Boolean>
      */
     public Mono<Boolean> tryAcquire() {
         return Mono.defer(() -> {
             long currentTime = System.currentTimeMillis();
             long lastTime = lastResetTime.get();
-            // 如果超过 1 秒，更新重置时间并释放信号量
-            if (currentTime - lastTime > refreshPeriod.getSeconds() * 1000) {
-                if (lastResetTime.compareAndSet(lastTime, currentTime)) {
-                    semaphore.release();
-                }
-            }
+            releaseIfNeeded(currentTime, lastTime);
             // 尝试获取许可
             boolean acquired = semaphore.tryAcquire();
             return Mono.just(acquired);
         });
+    }
+
+    public void releaseIfNeeded(long currentTime, long lastTime) {
+
+        // 如果超过 1 秒，更新重置时间并释放信号量
+        if (currentTime - lastTime > refreshPeriod.toMillis() &&
+                lastResetTime.compareAndSet(lastTime, currentTime)) {
+            semaphore.release();
+        }
     }
 }

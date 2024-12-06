@@ -14,6 +14,7 @@ class PongControllerTest extends Specification {
     @Resource
     WebTestClient webTestClient
 
+    // 测试请求5次并触发限流
     def "Should request pong /Hello endpoint 5 times"() {
         when: "Sending 5 requests to /pong/Hello with 300ms intervals"
         def results = []
@@ -33,6 +34,7 @@ class PongControllerTest extends Specification {
         results.contains("World") && results.contains("Too Many Requests")
     }
 
+    // 测试访问其他地址，并返回403
     def "Should request pong /Hi endpoint response 403"() {
         when: "Sending a requests to /pong/Hi"
         // 不按要求发送请求
@@ -41,7 +43,7 @@ class PongControllerTest extends Specification {
                 .expectBody(String.class)
                 .returnResult().getStatus().value()
 
-        then: "the expected status is 403"
+        then: "The expected status is 403"
         response == 403
     }
 }

@@ -1,4 +1,4 @@
-package com.code.pong.repository
+package com.code.pong.service
 
 import com.code.pong.entity.Logs
 import jakarta.annotation.Resource
@@ -11,15 +11,14 @@ import java.time.LocalDateTime
  * 测试保存到mongodb的方法
  */
 @SpringBootTest
-class LogsRepositoryTest extends Specification {
+class LogsServiceTest extends Specification {
 
     @Resource
-    LogsRepository logsRepository;
+    LogsService logsService;
 
     def "Save data using MongoDB"() {
         given: "init logs entity"
         def logs = new Logs()
-        logs.setId("1-mock-logs-id")
         logs.setInstance("mock_logs")
         logs.setPort(8080)
         logs.setStatus(200)
@@ -27,7 +26,7 @@ class LogsRepositoryTest extends Specification {
         logs.setCreateTime(LocalDateTime.now())
 
         when: "Save logs"
-        def logEntity = logsRepository.save(logs).block()
+        def logEntity = logsService.saveLogs(logs, "test-logs").block()
 
         then: "logEntity is non-null"
         logEntity != null
