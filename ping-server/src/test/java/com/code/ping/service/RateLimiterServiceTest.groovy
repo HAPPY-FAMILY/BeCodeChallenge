@@ -14,8 +14,8 @@ import java.time.Instant
 @ActiveProfiles("test")
 class RateLimiterServiceTest extends Specification  {
 
-    private static final String LOCK_FILE = "/Users/mac/Downloads/test_tmp/rate_limiter.lock";
-    private static final String COUNTER_FILE = "/Users/mac/Downloads/test_tmp/rate_counter.txt";
+    private static final String LOCK_FILE = "/Users/macbook/Downloads/test_tmp/rate_limiter.lock";
+    private static final String COUNTER_FILE = "/Users/macbook/Downloads/test_tmp/rate_counter.txt";
     private static final int MXA_LIMIT = 2; // 每秒允许的最大请求数
 
     RateLimiterService rateLimiterService = new RateLimiterService(LOCK_FILE, COUNTER_FILE, MXA_LIMIT)
@@ -23,7 +23,7 @@ class RateLimiterServiceTest extends Specification  {
     def setup() {
 
         // 清理测试环境
-        def tempFolder = new File("/Users/mac/Downloads/test_tmp")
+        def tempFolder = new File("/Users/macbook/Downloads/test_tmp")
         if (tempFolder.exists()) {
             tempFolder.listFiles().each { file ->
                 file.delete()
@@ -38,7 +38,7 @@ class RateLimiterServiceTest extends Specification  {
 
     def cleanup() {
         // 清理测试环境
-        def tempFolder = new File("/Users/mac/Downloads/test_tmp")
+        def tempFolder = new File("/Users/macbook/Downloads/test_tmp")
         if (tempFolder.exists()) {
             tempFolder.listFiles().each { file ->
                 file.delete()
@@ -57,8 +57,8 @@ class RateLimiterServiceTest extends Specification  {
         // 模拟锁和文件读取
         fileChannel.lock() >> fileLock
         randomAccessFile.getChannel() >> fileChannel
-        // 模拟checkAndUpdateCounterFile返回true
-        rateLimiterService.checkAndUpdateCounterFile(null)  >> true // Simulate no rate-limiting
+        // 模拟没有被checkAndUpdateCounterFile限流返回true
+        rateLimiterService.checkAndUpdateCounterFile(null)  >> true
 
         when: "tryAcquire is called"
         def result = rateLimiterService.tryAcquire().block()
@@ -67,10 +67,11 @@ class RateLimiterServiceTest extends Specification  {
         result == true
     }
 
+    // 获取文件锁触发异常
     def "Should return error if IOException occurs during lock acquisition"() {
-        given: "a mock for RandomAccessFile and FileChannel that throws IOException"
-
-        def tempFolder = new File("/Users/mac/Downloads/test_tmp")
+        given: "A mock for RandomAccessFile and FileChannel that throws IOException"
+        // 删除文件夹，触发IOException验证
+        def tempFolder = new File("/Users/macbook/Downloads/test_tmp")
         if (tempFolder.exists()) {
             tempFolder.listFiles().each { file ->
                 file.delete()
@@ -148,11 +149,12 @@ class RateLimiterServiceTest extends Specification  {
     def "Should reset counter if not in the same second"() {
         given: "Sleep 1 second and Write the define content to counter file"
         long currentTimestamp = Instant.now().getEpochSecond()
-        sleep(1000)
         File counterFile = new File(COUNTER_FILE)
         counterFile.text = "$currentTimestamp,5"
 
         when: "checkAndUpdateCounterFile is called"
+        // 睡一秒，达到不是同一秒的条件
+        sleep(1000)
         boolean result = rateLimiterService.checkAndUpdateCounterFile(null)
 
         then: "the counter reset and the request is allowed"

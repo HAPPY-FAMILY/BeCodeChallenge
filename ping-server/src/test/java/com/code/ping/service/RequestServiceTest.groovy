@@ -18,7 +18,8 @@ class RequestServiceTest extends Specification {
 
     RequestService requestService
 
-    def "sendPong with status 200 for /pong/Hello"() {
+    // 模拟发送请求成功
+    def "SendPong with status 200 for /pong/Hello"() {
         given: "A mock WebClient with a 200 and response 'World'"
         def mockWebClient = Mock(WebClient)
         def mockRequest = Mock(WebClient.RequestBodyUriSpec)
@@ -36,7 +37,7 @@ class RequestServiceTest extends Specification {
         field.setAccessible(true)
         field.set(requestService, mockWebClient)
 
-        when: "call sendPong with '/pong/Hello'"
+        when: "Call sendPong with '/pong/Hello'"
         def result = requestService.sendPong("/pong/Hello").block()
 
         then: "The code should be 200 and the result should be 'World'"
@@ -44,7 +45,8 @@ class RequestServiceTest extends Specification {
         response.statusCode.value() == 200 && response.body == "World"
     }
 
-    def "sendPong with status 429 for /pong/Hello"() {
+    // 模拟发送请求成功，被Pong限流
+    def "SendPong with status 429 for /pong/Hello"() {
         given: "A mock WebClient with a 429 and response 'Too Many Requests'"
         def mockWebClient = Mock(WebClient)
         def mockRequest = Mock(WebClient.RequestBodyUriSpec)
@@ -62,7 +64,7 @@ class RequestServiceTest extends Specification {
         field.setAccessible(true)
         field.set(requestService, mockWebClient)
 
-        when: "call sendPong with '/pong/Hello'"
+        when: "Call sendPong with '/pong/Hello'"
         def result = requestService.sendPong("/pong/Hello").block()
 
         then: "The code should be 429 and the result should be 'Too Many Requests'"

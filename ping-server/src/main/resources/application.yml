@@ -12,8 +12,8 @@ rocketmq:
     group: logs-group
 rate-limit:
   ping:
-    lock-file: /Users/mac/Downloads/tmp/rate_limiter.lock
-    counter-file: /Users/mac/Downloads/tmp/rate_counter.txt
+    lock-file: /Users/macbook/Downloads/tmp/rate_limiter.lock
+    counter-file: /Users/macbook/Downloads/tmp/rate_counter.txt
     max-limit: 2
 pong:
   url: http://127.0.0.1:8081/pong

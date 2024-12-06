@@ -12,15 +12,11 @@ import spock.lang.Subject
  */
 class LogsServiceTest extends Specification {
 
-    RocketMQTemplate rocketMQTemplate
+    RocketMQTemplate rocketMQTemplate = Mock(RocketMQTemplate)
 
     @Subject
-    LogsService logsService
+    LogsService logsService = new LogsService(rocketMQTemplate)
 
-    def setup() {
-        rocketMQTemplate = Mock(RocketMQTemplate)
-        logsService = new LogsService(rocketMQTemplate) // 将RocketMQTemplate通过构造器注入
-    }
 
     def "should send logs successfully when sendPingLogs is called"() {
         given: "a PingLogsStatus"

@@ -18,8 +18,8 @@ import spock.lang.Subject
 @ActiveProfiles("test")
 class RequestSchedulerTest extends Specification {
 
-    private static final String LOCK_FILE = "/Users/mac/Downloads/test_tmp/rate_limiter.lock";
-    private static final String COUNTER_FILE = "/Users/mac/Downloads/test_tmp/rate_counter.txt";
+    private static final String LOCK_FILE = "/Users/macbook/Downloads/test_tmp/rate_limiter.lock";
+    private static final String COUNTER_FILE = "/Users/macbook/Downloads/test_tmp/rate_counter.txt";
     private static final int MXA_LIMIT = 2; // 每秒允许的最大请求数
     RateLimiterService rateLimiterService = new RateLimiterService(LOCK_FILE, COUNTER_FILE, MXA_LIMIT)
 
