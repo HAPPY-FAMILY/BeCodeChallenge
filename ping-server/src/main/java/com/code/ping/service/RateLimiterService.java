@@ -10,6 +10,7 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.time.Instant;
+import java.util.Random;
 
 @Service
 public class RateLimiterService {
@@ -42,12 +43,24 @@ public class RateLimiterService {
      */
     public Mono<Boolean> tryAcquire() {
         return Mono.create(sink -> {
+            Random random = new Random();
+            long backoff = 50 + random.nextInt(200); // 随机等待50-250ms,简单处理锁饥饿情况
+            System.out.println(backoff);
+            try {
+                Thread.sleep(backoff);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             try (RandomAccessFile lockFile = new RandomAccessFile(LOCK_FILE, "rw");
                  FileChannel channel = lockFile.getChannel();
-                 FileLock fileLock = channel.lock()) { // 获取文件锁
-                // 判断是否超过次数和更新计数器文件
-                boolean allowed = checkAndUpdateCounterFile(null);
-                sink.success(allowed);
+                 ) { // 获取文件锁
+                try(FileLock fileLock = channel.lock()) {
+                    // 判断是否超过次数和更新计数器文件
+                    boolean allowed = checkAndUpdateCounterFile(null);
+                    sink.success(allowed);
+
+                }
+
             } catch (IOException e) {
                 sink.error(e);
             }
